@@ -16,14 +16,16 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import dev.daniel.base.ui.component.ViewToolbar;
-import dev.daniel.entity.Author;
-import dev.daniel.entity.Book;
-import dev.daniel.entity.Category;
 import dev.daniel.services.AuthorService;
 import dev.daniel.services.BookService;
 import dev.daniel.services.CategoryService;
+import dev.daniel.entity.Author;
+import dev.daniel.entity.Book;
+import dev.daniel.entity.Category;
 
 import java.util.stream.Stream;
+
+import static com.vaadin.flow.spring.data.VaadinSpringDataHelpers.toSpringPageRequest;
 
 @Route("book-list")
 @PageTitle("Books")
@@ -47,8 +49,6 @@ public class BookView extends Main {
     private final TextField ratingEditField;
     private final ComboBox<Author> authorField;
     private final ComboBox<Category> categoryField;
-    private final Button updateBtn;
-    private final Button deleteBtn;
 
     private final FormLayout sideEditorForm;
     private final TextField sideTitle;
@@ -119,11 +119,7 @@ public class BookView extends Main {
             }
         });
 
-        updateBtn = new Button("Update", e -> updateBook());
-        deleteBtn = new Button("Delete", e -> deleteBook());
-        deleteBtn.addThemeVariants(ButtonVariant.LUMO_ERROR);
-
-        editorForm.add(titleField, ratingEditField, authorField, categoryField, updateBtn, deleteBtn);
+        editorForm.add(titleField, ratingEditField, authorField, categoryField);
 
         sideEditorForm = new FormLayout();
         sideEditorForm.setVisible(false);
@@ -236,8 +232,14 @@ public class BookView extends Main {
         }
 
         double rating;
+
         try {
             rating = Double.parseDouble(ratingField.getValue());
+            if (rating > 10D || rating < 0) {
+                Notification.show("Book must have a rating between 0 and 10", 3000, Notification.Position.BOTTOM_END)
+                        .addThemeVariants(NotificationVariant.LUMO_ERROR);
+                return;
+            }
         } catch (NumberFormatException e) {
             Notification.show("Please enter a valid rating", 3000, Notification.Position.BOTTOM_END)
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
@@ -284,7 +286,7 @@ public class BookView extends Main {
             selectedBook = null;
             editorForm.setVisible(false);
             sideEditorForm.setVisible(false);
-            bookGrid.getDataProvider().refreshAll();
+            bookGrid.setItems(bookService.getAllBooks());
             Notification.show("Book deleted", 3000, Notification.Position.BOTTOM_END)
                     .addThemeVariants(NotificationVariant.LUMO_ERROR);
         }

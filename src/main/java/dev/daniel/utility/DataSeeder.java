@@ -1,5 +1,7 @@
 package dev.daniel.utility;
 
+import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.csv.CSVReader;
 import dev.daniel.entity.Author;
 import dev.daniel.entity.Book;
 import dev.daniel.entity.Category;
@@ -8,8 +10,14 @@ import dev.daniel.repository.BookRepository;
 import dev.daniel.repository.CategoryRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Random;
+
+
 
 @Component
 public class DataSeeder implements CommandLineRunner {
@@ -18,6 +26,8 @@ public class DataSeeder implements CommandLineRunner {
     private final CategoryRepository categoryRepo;
     private final BookRepository bookRepo;
 
+    Random random = new Random();
+
     public DataSeeder(AuthorRepository authorRepo, CategoryRepository categoryRepo, BookRepository bookRepo) {
         this.authorRepo = authorRepo;
         this.categoryRepo = categoryRepo;
@@ -25,46 +35,73 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
-        Random random = new Random();
 
-        // Create 10 authors
-        Author[] authors = new Author[10];
-        for (int i = 0; i < 10; i++) {
-            Author author = new Author();
-            author.setName("Author " + (i + 1));
-            authorRepo.save(author);
-            authors[i] = author;
+        InputStream is = getClass().getClassLoader().getResourceAsStream("books_list.csv");
+        if (is == null) {
+            throw new FileNotFoundException("books_list.csv not found in resources");
         }
 
-        // Create 5 categories
-        Category[] categories = new Category[5];
-        for (int i = 0; i < 5; i++) {
-            Category category = new Category();
-            category.setName("Category " + (i + 1));
-            categoryRepo.save(category);
-            categories[i] = category;
+        try (CSVReader reader = new CSVReader(new InputStreamReader(is))) {
+            boolean first = true;
+
+            ICommonsList<String> row;
+            while ((row = reader.readNext()) != null) {
+                String title = row.get(0);
+                String genre = row.get(1);
+                String authorName = row.get(2);
+
+                Author author = authorRepo.findByName(authorName)
+                        .orElseGet(() -> {
+                            Author a = new Author();
+                            a.setName(authorName);
+                            return authorRepo.save(a);
+                        });
+
+                Category category = categoryRepo.findByName(genre)
+                        .orElseGet(() -> {
+                            Category c = new Category();
+                            c.setName(genre);
+                            return categoryRepo.save(c);
+                        });
+
+                Book book = new Book();
+                book.setTitle(title);
+                double rating;
+                switch (genre) {
+                    case "Philosophy":
+                        rating = 9 + random.nextDouble();
+                        break;
+                    case "Comedy":
+                        rating = 5 + 2 * random.nextDouble();
+                        break;
+                    case "SciFi":
+                        rating = 4 + 3 * random.nextDouble();
+                        break;
+                    case "Horror":
+                        rating = 7 + random.nextDouble();
+                        break;
+                    case "Action":
+                        rating = 3 + 5 * random.nextDouble();
+                        break;
+                    default:
+                        rating = 5.0;
+                }
+
+                book.setBookRating(rating);
+                book.setAuthor(author);
+                book.setCategory(category);
+
+                author.addBook(book);
+                category.addBook(book);
+
+                bookRepo.save(book);
+            }
         }
 
-        // Create 50 books
-        for (int i = 0; i < 50; i++) {
-            Author author = authors[random.nextInt(authors.length)];
-            Category category = categories[random.nextInt(categories.length)];
-            double rating = 1 + (5 - 1) * random.nextDouble(); // rating 1.0 - 5.0
-
-            Book book = new Book();
-            book.setTitle("Book " + (i + 1));
-            book.setBookRating(rating);
-            book.setAuthor(author);
-            book.setCategory(category);
-
-            // maintain bidirectional relationship
-            author.addBook(book);
-            category.addBook(book);
-
-            bookRepo.save(book);
-        }
-
-        System.out.println("50 books inserted with authors and categories.");
+        System.out.println("Books inserted from CSV.");
     }
 }
+
+
