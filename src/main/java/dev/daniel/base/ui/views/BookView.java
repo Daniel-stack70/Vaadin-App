@@ -16,16 +16,14 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import dev.daniel.base.ui.component.ViewToolbar;
-import dev.daniel.services.AuthorService;
-import dev.daniel.services.BookService;
-import dev.daniel.services.CategoryService;
 import dev.daniel.entity.Author;
 import dev.daniel.entity.Book;
 import dev.daniel.entity.Category;
+import dev.daniel.services.AuthorService;
+import dev.daniel.services.BookService;
+import dev.daniel.services.CategoryService;
 
 import java.util.stream.Stream;
-
-import static com.vaadin.flow.spring.data.VaadinSpringDataHelpers.toSpringPageRequest;
 
 @Route("book-list")
 @PageTitle("Books")

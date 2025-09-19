@@ -1,12 +1,11 @@
 package dev.daniel.services;
 
-import dev.daniel.repository.AuthorRepository;
-import dev.daniel.repository.BookRepository;
-import dev.daniel.repository.CategoryRepository;
 import dev.daniel.entity.Author;
 import dev.daniel.entity.Book;
 import dev.daniel.entity.Category;
-import org.springframework.data.domain.Pageable;
+import dev.daniel.repository.AuthorRepository;
+import dev.daniel.repository.BookRepository;
+import dev.daniel.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
