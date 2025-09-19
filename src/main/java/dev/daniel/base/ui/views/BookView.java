@@ -16,9 +16,9 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import dev.daniel.base.ui.component.ViewToolbar;
-import dev.daniel.base.ui.services.AuthorService;
-import dev.daniel.base.ui.services.BookService;
-import dev.daniel.base.ui.services.CategoryService;
+import dev.daniel.services.AuthorService;
+import dev.daniel.services.BookService;
+import dev.daniel.services.CategoryService;
 import dev.daniel.entity.Author;
 import dev.daniel.entity.Book;
 import dev.daniel.entity.Category;
@@ -158,17 +158,18 @@ public class BookView extends Main {
         sideEditorForm.add(sideTitle, sideRating, sideAuthorCombo, sideCategoryCombo, sideUpdateBtn, sideDeleteBtn);
 
         bookGrid = new Grid<>();
-        bookGrid.setItems(query -> bookService.getAllBooks(toSpringPageRequest(query)).stream());
+        //bookGrid.setItems(query -> bookService.getAllBooks(toSpringPageRequest(query)).stream());
+        bookGrid.setItems(bookService.getAllBooks());
         bookGrid.addColumn(Book::getTitle).setHeader("Title");
         bookGrid.addColumn(book -> book.getAuthor().getName()).setHeader("Author");
         bookGrid.addColumn(book -> book.getCategory().getName()).setHeader("Category");
-        bookGrid.addColumn(Book::getBookRating).setHeader("Rating");
+        bookGrid.addColumn(book -> String.format("%.2f", book.getBookRating()) ).setHeader("Rating");
         bookGrid.setSizeFull();
         bookGrid.asSingleSelect().addValueChangeListener(event -> {
             selectedBook = event.getValue();
             if (selectedBook != null) {
                 sideTitle.setValue(selectedBook.getTitle());
-                sideRating.setValue(String.valueOf(selectedBook.getBookRating()));
+                sideRating.setValue(String.format("%.2f", selectedBook.getBookRating()));
                 sideAuthorCombo.setValue(selectedBook.getAuthor());
                 sideCategoryCombo.setValue(selectedBook.getCategory());
                 sideEditorForm.setVisible(true);

@@ -1,8 +1,8 @@
-package dev.daniel.base.ui.services;
+package dev.daniel.services;
 
-import dev.daniel.base.ui.repository.AuthorRepository;
-import dev.daniel.base.ui.repository.BookRepository;
-import dev.daniel.base.ui.repository.CategoryRepository;
+import dev.daniel.repository.AuthorRepository;
+import dev.daniel.repository.BookRepository;
+import dev.daniel.repository.CategoryRepository;
 import dev.daniel.entity.Author;
 import dev.daniel.entity.Book;
 import dev.daniel.entity.Category;
@@ -43,7 +43,7 @@ public class BookService {
 
 
     @Transactional(readOnly = true)
-    public List<Book> getAllBooks(Pageable pageable) {
+    public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
 

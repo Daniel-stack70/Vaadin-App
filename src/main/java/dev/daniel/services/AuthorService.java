@@ -1,8 +1,6 @@
-package dev.daniel.base.ui.services;
+package dev.daniel.services;
 
-import dev.daniel.base.ui.repository.AuthorRepository;
-import dev.daniel.base.ui.repository.BookRepository;
-import dev.daniel.base.ui.repository.CategoryRepository;
+import dev.daniel.repository.AuthorRepository;
 import dev.daniel.entity.Author;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

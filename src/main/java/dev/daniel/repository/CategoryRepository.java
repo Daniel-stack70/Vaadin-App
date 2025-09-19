@@ -1,8 +1,6 @@
-package dev.daniel.base.ui.repository;
+package dev.daniel.repository;
 
-import dev.daniel.entity.Book;
 import dev.daniel.entity.Category;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

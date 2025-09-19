@@ -1,4 +1,4 @@
-package dev.daniel.base.ui.repository;
+package dev.daniel.repository;
 
 import dev.daniel.entity.Book;
 import org.springframework.data.jpa.repository.JpaRepository;

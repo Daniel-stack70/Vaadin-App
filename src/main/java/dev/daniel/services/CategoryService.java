@@ -1,6 +1,6 @@
-package dev.daniel.base.ui.services;
+package dev.daniel.services;
 
-import dev.daniel.base.ui.repository.CategoryRepository;
+import dev.daniel.repository.CategoryRepository;
 import dev.daniel.entity.Category;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -32,6 +32,7 @@ public class Book {
     private Category category;
 
 
+
     public Book(String title, Double rating, Author managedAuthor, Category managedCategory) {
         this.title = title;
         this.bookRating = rating;
